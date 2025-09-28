@@ -16,15 +16,16 @@ def expected_value(values: tuple, probabilities: tuple) -> float:
     return sum(v * p for v, p in zip(values, probabilities))
 
 
-def conditional_probability(values: tuple) -> float:
-    count_a1 = 0
-    count_a1b1 = 0
-    for a, b in values:
-        if a == 1:
-            count_a1 += 1
-            if b == 1:
-                count_a1b1 += 1
-    return count_a1b1 / count_a1
+def conditional_probability(values):
+    count_a = 0
+    count_a_and_b = 0
+    for pair in values:
+        first, second = pair
+        if first == 1:
+            count_A += 1
+            if second == 1:
+                count_a_and_b += 1
+    return count_a_and_b / count_a
 
 
 def bayesian_probability(a: float, ba: float) -> float:
