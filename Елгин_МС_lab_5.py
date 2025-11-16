@@ -12,27 +12,12 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 from sklearn.metrics import accuracy_score, f1_score
 
-# --- Совместимый OneHotEncoder для разных версий scikit-learn ---
-# В новых версиях используется параметр `sparse_output`, в старых — `sparse`.
-# Эта обёртка вернёт корректный OHE в любом случае.
 def make_ohe():
     try:
         return OneHotEncoder(handle_unknown="ignore", sparse_output=False)
     except TypeError:
         # Для старых версий scikit-learn
         return OneHotEncoder(handle_unknown="ignore", sparse=False)
-
-# --------------------------------------------------------------
-# Лабораторная работа №5 — Метрические методы и решающие деревья
-# Файл: Галиев_АА_lab_5.py
-# Функция по спецификации:classification_training(data)
-# Требования из методички:
-#  - целевая переменная: 'mental_wellness_index_0_100' -> бинаризация (<15 -> 0; >=15 -> 1)
-#  - обучить KNN и DecisionTree с осмысленным подбором гиперпараметров
-#  - вывести метрики accuracy и f1 по шаблону: "{model_name}: {accuracy}; {f1_score}" (model_name: KNN, DT)
-#  - построить дерево обученной модели решающего дерева (plot_tree)
-# --------------------------------------------------------------
-
 
 def _clean_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Стрипуем пробелы/кавычки, удаляем Unnamed-столбцы, нормализуем пропуски."""
@@ -98,12 +83,7 @@ def _build_pipelines():
     knn_pipe = Pipeline([("preprocess", pre_knn), ("model", knn)])
 
     # Сетка умеренного размера, чтобы не перегружать вычисления, но удержать bias/variance баланс.
-    # Обоснование:
-    #  - n_neighbors: малые значения (3–7) лучше улавливают локальные структуры (риск переобучения),
-    #    большие (9–11) сглаживают шум (риск недообучения). Подбираем компромисс.
-    #  - weights: 'distance' часто устойчивее при шуме и разреженности.
-    #  - p: 1 (Манхэттен) и 2 (Евклид) — стандартный выбор.
-    param_grid_knn = {
+        param_grid_knn = {
         "model__n_neighbors": [3, 5, 7, 9, 11],
         "model__weights": ["uniform", "distance"],
         "model__p": [1, 2],
